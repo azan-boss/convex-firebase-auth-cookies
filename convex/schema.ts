@@ -12,6 +12,6 @@ export default defineSchema({
         id: v.string(),
         title: v.string(),
         description: v.string(),
-
+        
     })
 });

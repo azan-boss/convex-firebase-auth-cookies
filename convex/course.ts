@@ -20,27 +20,55 @@ export const getCourses = query({
 })
 
 
-export const getCourse=query({
-    args:{
-        id:v.string()
+export const getCourse = query({
+    args: {
+        id: v.string()
     },
-    handler:async (ctx,args) => {
-        return ctx.db.query("courses")
-        .filter((q) => q.eq(q.field("id"), args.id))
-        .collect();
+    handler: async ({ db }, args) => {
+        return await db.query("courses")
+            .filter(q => q.eq(q.field("id"), args.id))
+            .unique();
     }
 })
 
 
-export const enrollthecourse=query({
-    args:{
-        id:v.string()
+export const enrollToCourse = mutation({
+    args: {
+        id: v.string(),
+        userId:v.string()
     },
-    handler:async (ctx,args) => {
-        const enrolled=ctx.db.query("users")
-        .filter((q) => q.eq(q.field("id"), args.id))
-        .collect();
-        return 
-    }
+    handler: async (ctx, args) => {
+        const identity = await ctx.auth.getUserIdentity();
+        if (!identity) {
+            throw new Error("Not authenticated");
+        }
 
+        const course = await ctx.db.query("courses")
+            .filter(q => q.eq(q.field("id"), args.id))
+            .unique();
+        
+        if (!course) {
+            throw new Error("Course not found");
+        }
+
+       
+        
+        // Update the user's courses array
+        const user = await ctx.db.query("users")
+            .filter(q => q.eq(q.field("id"), args.userId))
+            .unique();
+        
+        if (!user) {
+            throw new Error("User not found");
+        }
+
+        const courses = user.courses || [];
+        if (!courses.includes(args.id)) {
+            await ctx.db.patch(user._id, {
+                courses: [...courses, args.id]
+            });
+        }
+
+        return course;
+    }
 })
