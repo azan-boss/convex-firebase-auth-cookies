@@ -25,10 +25,22 @@ export const getCourse=query({
         id:v.string()
     },
     handler:async (ctx,args) => {
-
         return ctx.db.query("courses")
         .filter((q) => q.eq(q.field("id"), args.id))
         .collect();
-    
     }
+})
+
+
+export const enrollthecourse=query({
+    args:{
+        id:v.string()
+    },
+    handler:async (ctx,args) => {
+        const enrolled=ctx.db.query("users")
+        .filter((q) => q.eq(q.field("id"), args.id))
+        .collect();
+        return 
+    }
+
 })
