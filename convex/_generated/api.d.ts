@@ -13,6 +13,7 @@ import type {
   FilterApi,
   FunctionReference,
 } from "convex/server";
+import type * as course from "../course.js";
 import type * as profile from "../profile.js";
 
 /**
@@ -24,6 +25,7 @@ import type * as profile from "../profile.js";
  * ```
  */
 declare const fullApi: ApiFromModules<{
+  course: typeof course;
   profile: typeof profile;
 }>;
 export declare const api: FilterApi<

@@ -8,4 +8,10 @@ export default defineSchema({
         role: v.string(),
         courses: v.optional(v.array(v.string()))
     }),
+    courses: defineTable({
+        id: v.string(),
+        title: v.string(),
+        description: v.string(),
+
+    })
 });
