@@ -18,7 +18,8 @@ export async function POST(request: Request) {
         const user = userCredential.user;
         const token = await user.getIdToken();
 
-        return NextResponse.json({
+         
+        const response=NextResponse.json({
             message: "Successfully logged in",
             user: {
                 uid: user.uid,
@@ -27,6 +28,17 @@ export async function POST(request: Request) {
                 token
             }
         });
+
+        response.cookies.set({
+            name: 'auth-token',
+            value: token,
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: 'lax',
+            maxAge: 60 * 60 * 24 * 7 // 1 week
+        });
+
+        return response;
     } catch (error: any) {
         console.error("Login error:", error);
         return NextResponse.json(
